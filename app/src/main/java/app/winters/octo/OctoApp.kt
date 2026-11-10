@@ -21,6 +21,7 @@ import app.winters.octo.update.AppUpdates
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.crossfade
 import dagger.hilt.android.HiltAndroidApp
@@ -33,6 +34,8 @@ import javax.inject.Inject
 // queueing the urgent ones behind the rest, or the app's other calls
 // behind covers.
 private const val COVER_REQUESTS_PER_HOST = 16
+// The most the cover memory cache holds, in bytes.
+private const val COVER_MEMORY_BYTES = 32L * 1024 * 1024
 
 @HiltAndroidApp
 class OctoApp : Application(), SingletonImageLoader.Factory {
@@ -93,6 +96,10 @@ class OctoApp : Application(), SingletonImageLoader.Factory {
                 add(ServerArtworkFetcher.Factory(sessions))
                 add(ServerArtworkKeyer())
             }
+            // Coil's default is a quarter of the heap (about 64 MB of 256),
+            // on top of the playlist covers' own 24 MB; with a big library
+            // that left too little room. A cover that falls out is loaded again.
+            .memoryCache { MemoryCache.Builder().maxSizeBytes(COVER_MEMORY_BYTES).build() }
             .crossfade(true)
             .build()
     }
