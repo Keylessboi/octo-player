@@ -9,6 +9,9 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
+// How many songs "shuffle everything" queues: about 290 hours of music.
+const val SHUFFLE_ALL_SONGS = 5_000
+
 @Dao
 interface CatalogDao {
     @Query("SELECT * FROM album ORDER BY addedAt DESC LIMIT :limit")
@@ -66,6 +69,12 @@ interface CatalogDao {
 
     @Query("SELECT id FROM track ORDER BY sortKey")
     suspend fun allTrackIds(): List<String>
+
+    // A random handful of songs, for "shuffle everything": the order is
+    // random anyway, and a queue of the whole library (110k songs on a big
+    // server) costs a lot of memory in the app, the player and its spare.
+    @Query("SELECT id FROM track ORDER BY RANDOM() LIMIT :limit")
+    suspend fun randomTrackIds(limit: Int): List<String>
 
     @Query("SELECT * FROM track WHERE albumId = :albumId ORDER BY albumOrder")
     fun albumTracks(albumId: String): Flow<List<TrackEntity>>

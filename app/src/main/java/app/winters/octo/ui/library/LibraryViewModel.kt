@@ -1,5 +1,6 @@
 package app.winters.octo.ui.library
 
+import app.winters.octo.catalog.SHUFFLE_ALL_SONGS
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.winters.octo.catalog.AlbumEntity
@@ -102,7 +103,7 @@ class LibraryViewModel @Inject constructor(
 
     private fun playGroups(order: List<String>, shuffle: Boolean, groupOf: (TrackPlace) -> String) {
         viewModelScope.launch {
-            val ids = if (shuffle) dao.allTrackIds() else songsInGroupOrder(dao.trackPlaces(), groupOf, order)
+            val ids = if (shuffle) dao.randomTrackIds(SHUFFLE_ALL_SONGS) else songsInGroupOrder(dao.trackPlaces(), groupOf, order)
             playback.playTracks(ids, 0, shuffle)
         }
     }

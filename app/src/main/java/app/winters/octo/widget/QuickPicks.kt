@@ -1,5 +1,6 @@
 package app.winters.octo.widget
 
+import app.winters.octo.catalog.SHUFFLE_ALL_SONGS
 import app.winters.octo.catalog.CatalogDao
 import app.winters.octo.catalog.UserDao
 import kotlinx.coroutines.flow.first
@@ -25,5 +26,5 @@ class QuickPicks @Inject constructor(
     }
 
     // Everything, for a play button with no queue to go back to.
-    suspend fun everything(): List<String> = catalog.allTrackIds()
+    suspend fun everything(): List<String> = catalog.randomTrackIds(SHUFFLE_ALL_SONGS)
 }

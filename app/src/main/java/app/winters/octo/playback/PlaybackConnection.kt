@@ -1,5 +1,6 @@
 package app.winters.octo.playback
 
+import app.winters.octo.catalog.SHUFFLE_ALL_SONGS
 import android.content.ComponentName
 import android.content.Context
 import android.media.AudioManager
@@ -194,7 +195,7 @@ class PlaybackConnection @Inject constructor(
     // station that is connecting counts as playing, so the button stops it.
     fun togglePlayPause() = withController { c ->
         when {
-            c.mediaItemCount == 0 -> scope.launch { playTracks(catalog.allTrackIds(), shuffle = true) }
+            c.mediaItemCount == 0 -> scope.launch { playTracks(catalog.randomTrackIds(SHUFFLE_ALL_SONGS), shuffle = true) }
             c.isPlaying -> c.pause()
             c.playWhenReady && c.currentMediaItem?.mediaId?.let(::isRadio) == true -> c.pause()
             else -> {

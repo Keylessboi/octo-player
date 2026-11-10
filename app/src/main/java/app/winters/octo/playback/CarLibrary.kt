@@ -1,5 +1,6 @@
 package app.winters.octo.playback
 
+import app.winters.octo.catalog.SHUFFLE_ALL_SONGS
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -114,7 +115,7 @@ class CarLibrary @Inject constructor(
     // that match; saying nothing in particular shuffles everything.
     suspend fun forVoice(query: String): Pair<List<String>, Boolean> {
         val q = query.trim()
-        if (q.isEmpty()) return catalog.allTrackIds() to true
+        if (q.isEmpty()) return catalog.randomTrackIds(SHUFFLE_ALL_SONGS) to true
         val name = matchKey(q)
         val album = catalog.searchAlbums(q, 5).firstOrNull { name.isNotEmpty() && matchKey(it.title) == name }
         if (album != null) return catalog.albumTrackIds(album.id) to false
